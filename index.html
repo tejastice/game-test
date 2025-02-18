@@ -1,10 +1,111 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <title>test page</title>
+  <meta charset="UTF-8">
+  <title>クリックチャレンジゲーム</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      background-color: #f0f0f0;
+      font-family: sans-serif;
+    }
+    #target {
+      position: absolute;
+      padding: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    #score, #time {
+      position: absolute;
+      top: 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #score { left: 10px; }
+    #time { right: 10px; }
+    #start {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 10px 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  test page body
+  <div id="score">スコア: 0</div>
+  <div id="time">残り時間: 30秒</div>
+  <button id="start">ゲームスタート</button>
+  <button id="target" style="display: none;">クリック！</button>
+
+  <script>
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+    const scoreDisplay = document.getElementById('score');
+    const timeDisplay = document.getElementById('time');
+    const target = document.getElementById('target');
+    const startButton = document.getElementById('start');
+
+    // ターゲットボタンを画面内のランダムな位置に移動させる関数
+    function randomPosition() {
+      const bodyWidth = window.innerWidth;
+      const bodyHeight = window.innerHeight;
+      const buttonWidth = target.offsetWidth;
+      const buttonHeight = target.offsetHeight;
+      const maxLeft = bodyWidth - buttonWidth;
+      const maxTop = bodyHeight - buttonHeight;
+      const randomLeft = Math.random() * maxLeft;
+      const randomTop = Math.random() * maxTop;
+      target.style.left = randomLeft + 'px';
+      target.style.top = randomTop + 'px';
+    }
+
+    // ゲーム開始処理
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      scoreDisplay.textContent = "スコア: " + score;
+      timeDisplay.textContent = "残り時間: " + timeLeft + "秒";
+      startButton.style.display = 'none';
+      target.style.display = 'block';
+      randomPosition();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timeDisplay.textContent = "残り時間: " + timeLeft + "秒";
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          gameOver();
+        }
+      }, 1000);
+    }
+
+    // ゲーム終了時の処理
+    function gameOver() {
+      target.style.display = 'none';
+      startButton.textContent = "再スタート";
+      startButton.style.display = 'block';
+      alert("ゲームオーバー！スコアは " + score + " でした。");
+    }
+
+    // ターゲットがクリックされたらスコアを加算し、位置を再設定
+    target.addEventListener('click', function() {
+      score++;
+      scoreDisplay.textContent = "スコア: " + score;
+      randomPosition();
+    });
+
+    // スタートボタンをクリックするとゲーム開始
+    startButton.addEventListener('click', startGame);
+  </script>
 </body>
-  
-  
 </html>
